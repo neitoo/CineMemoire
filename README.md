@@ -2,5 +2,5 @@
 
 # <p align="center">Cine Memoire</p>
 
-&nbsp;<div align="center"> ![](https://geps.dev/progress/5) </p>
+&nbsp;<div align="center"> ![](https://geps.dev/progress/10) </p>
 <p align="center">Coming soon</p>
