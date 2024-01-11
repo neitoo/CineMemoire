@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CineMemoire</string>
+    <string name="home_name">Главная</string>
+    <string name="search_name">Поиск</string>
+    <string name="wishlist_name">Избранное</string>
+    <string name="settings_name">Настройки</string>
+</resources>
