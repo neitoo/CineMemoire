@@ -3,10 +3,13 @@ package com.neito.cinememoire.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -16,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.neito.cinememoire.R
@@ -38,10 +42,16 @@ fun SettingsScreen(navController: NavHostController){
                     }
                 }
             )
-        },
-        content = { padding ->
+        }
+    ){
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .padding(it),
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            color = MaterialTheme.colorScheme.inverseOnSurface,
+        ) {
             Box(
-                modifier = Modifier.padding(padding)
+                modifier = Modifier
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
@@ -52,5 +62,5 @@ fun SettingsScreen(navController: NavHostController){
                 )
             }
         }
-    )
+    }
 }
