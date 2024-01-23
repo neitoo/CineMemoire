@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CineMemoire</string>
+    <string name="app_name">Cine Memoire</string>
     <string name="home_name">Главная</string>
     <string name="search_name">Поиск</string>
     <string name="wishlist_name">Избранное</string>
     <string name="settings_name">Настройки</string>
+    <string name="search_textfield_label">Название фильма</string>
+    <string name="and_text">Или</string>
+    <string name="create_movie_button_text">Создайте вручную</string>
+    <string name="search_info_text">Найдите фильмы, чтобы добавить в избранное или просмотренное</string>
 </resources>

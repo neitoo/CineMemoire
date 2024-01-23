@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">CineMemoire</string>
+    <string name="app_name">Cine Memoire</string>
     <string name="home_name">Home</string>
     <string name="search_name">Search</string>
     <string name="wishlist_name">Favourites</string>
     <string name="settings_name">Settings</string>
+    <string name="search_textfield_label">Title</string>
+    <string name="and_text">Or</string>
+    <string name="create_movie_button_text">Create it manually</string>
+    <string name="search_info_text">Find movies to add to favorites or viewed</string>
 </resources>
