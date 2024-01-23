@@ -5,5 +5,6 @@ enum class Screens {
     SearchScreen,
     WishlistScreen,
     SettingsScreen,
-    MainScreen
+    MainScreen,
+    CreateScreens
 }
