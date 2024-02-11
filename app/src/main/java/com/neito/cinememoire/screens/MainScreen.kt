@@ -2,9 +2,6 @@ package com.neito.cinememoire.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.Surface
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +16,9 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -33,24 +27,25 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.neito.cinememoire.R
-import com.neito.cinememoire.navigation.BottomNavGraph
 import com.neito.cinememoire.navigation.Screens
 import com.neito.cinememoire.navigation.listOfNavItems
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(mainNavController: NavHostController){
-    val navController = rememberNavController()
+fun MainScreen(navController: NavHostController){
+    val navControllerBottomBar = rememberNavController()
     Scaffold(
         topBar = {
-            TopAppBarContent(mainNavController)
+            TopAppBarContent(navController)
         },
         bottomBar = {
-            BottomBarContent(navController = navController)
+            BottomBarContent(navControllerBottomBar)
         }
     ) {
         Surface(modifier = Modifier
@@ -59,14 +54,35 @@ fun MainScreen(mainNavController: NavHostController){
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.inverseOnSurface,
         ) {
-            BottomNavGraph(navController = navController)
+            BottomNavGraph(navControllerBottomBar, navController)
+        }
+    }
+}
+
+@Composable
+private fun BottomNavGraph(
+    navControllerBottomBar: NavHostController,
+    navController: NavHostController
+) {
+    NavHost(
+        navController = navControllerBottomBar,
+        startDestination = Screens.HomeScreen.screen,
+    ) {
+        composable(route = Screens.HomeScreen.screen) {
+            HomeScreen()
+        }
+        composable(route = Screens.SearchScreen.screen) {
+            SearchScreen(navController)
+        }
+        composable(route = Screens.WishlistScreen.screen) {
+            WishlistScreen()
         }
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun TopAppBarContent(mainNavController: NavHostController) {
+private fun TopAppBarContent(navController: NavHostController) {
     TopAppBar(
         title = {
             Text(
@@ -76,7 +92,7 @@ private fun TopAppBarContent(mainNavController: NavHostController) {
             )
         },
         actions = {
-            IconButton(onClick = { mainNavController.navigate(Screens.SettingsScreen.name)}) {
+            IconButton(onClick = { navController.navigate(Screens.SettingsScreen.screen)}) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.a_settings_icon),
                     contentDescription = "Localized description"
