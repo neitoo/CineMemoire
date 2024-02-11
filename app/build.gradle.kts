@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("io.realm.kotlin") version "1.13.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.0"
+    id("kotlinx-serialization")
 }
 
 android {
@@ -110,4 +110,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.1")
+
 }
