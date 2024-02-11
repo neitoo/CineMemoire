@@ -8,15 +8,30 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.animation.ObjectAnimator
 import android.view.View
 import android.view.animation.OvershootInterpolator
+import androidx.compose.runtime.Composable
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreenViewProvider
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.neito.cinememoire.navigation.MainNavGraph
+import com.neito.cinememoire.presentation.appModule
+import com.neito.cinememoire.navigation.Screens
+import com.neito.cinememoire.screens.CreateScreen
+import com.neito.cinememoire.screens.MainScreen
+import com.neito.cinememoire.screens.SettingsScreen
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
 
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startKoin {
+            androidContext(this@HomeActivity)
+            modules(appModule)
+        }
+
         installSplashScreen().apply{
             setOnExitAnimationListener{ screen ->
                 animateSplashScreenExit(screen)
@@ -24,10 +39,27 @@ class HomeActivity : ComponentActivity() {
         }
         setContent {
             CineMemoireTheme {
-                val mainNavController = rememberNavController()
+                val navController = rememberNavController()
+                MainNavGraph(navController)
 
-                MainNavGraph(navController = mainNavController)
+            }
+        }
+    }
 
+    @Composable
+    private fun MainNavGraph(navController: NavHostController) {
+        NavHost(
+            navController = navController,
+            startDestination = Screens.MainScreen.screen,
+        ) {
+            composable(route = Screens.MainScreen.screen) {
+                MainScreen(navController)
+            }
+            composable(route = Screens.SettingsScreen.screen) {
+                SettingsScreen(navController)
+            }
+            composable(route = Screens.CreateScreen.screen) {
+                CreateScreen(navController)
             }
         }
     }
