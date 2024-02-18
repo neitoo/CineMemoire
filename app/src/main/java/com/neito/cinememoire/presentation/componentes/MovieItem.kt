@@ -27,7 +27,7 @@ fun MovieItem(movie: Film){
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = movie.nameRu ?: movie.nameEn,
+                text = movie.nameRu ?: movie.nameEn ?: "",
                 style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 4.dp)
             )
