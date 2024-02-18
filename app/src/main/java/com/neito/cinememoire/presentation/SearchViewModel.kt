@@ -13,9 +13,14 @@ class SearchViewModel(private val apiService: ApiService) : ViewModel() {
     private val _searchResults = MutableStateFlow<SearchResponse?>(null)
     val searchResults: StateFlow<SearchResponse?> = _searchResults
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     fun performSearch(keyword: String, page: String){
+        _isLoading.value = true
         viewModelScope.launch{
             _searchResults.value = apiService.getSearch(keyword,page)
+            _isLoading.value = false
         }
     }
 
