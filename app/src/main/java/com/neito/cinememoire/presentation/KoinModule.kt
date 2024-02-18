@@ -6,5 +6,6 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { ApiService.create() }
-    viewModel { SearchViewModel(get())}
+    viewModel { SearchViewModel(get()) }
+    viewModel { BottomSheetViewModel() }
 }
