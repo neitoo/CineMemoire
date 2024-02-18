@@ -14,7 +14,7 @@ data class SearchResponse(
 data class Film (
     val filmId: Long,
     val nameRu: String? = null,
-    val nameEn: String,
+    val nameEn: String? = null,
     val type: String,
     val year: String,
     val description: String? = null,
