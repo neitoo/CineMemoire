@@ -1,22 +1,15 @@
 package com.neito.cinememoire.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,10 +18,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -48,29 +44,33 @@ import androidx.navigation.NavHostController
 import com.neito.cinememoire.R
 import com.neito.cinememoire.presentation.SearchViewModel
 import com.neito.cinememoire.navigation.Screens
+import com.neito.cinememoire.presentation.BottomSheetContent
+import com.neito.cinememoire.presentation.BottomSheetViewModel
 import com.neito.cinememoire.presentation.componentes.MovieItem
 import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavHostController) {
-    val viewModel: SearchViewModel = get()
+fun SearchScreen(navController: NavHostController, viewModelSheet: BottomSheetViewModel) {
+    val viewModelSearch = koinInject<SearchViewModel>()
 
     var textState by remember {
         mutableStateOf("")
     }
 
-    val searchResults by viewModel.searchResults.collectAsState()
+    val searchResults by viewModelSearch.searchResults.collectAsState()
+    val isLoading by viewModelSearch.isLoading.collectAsState()
 
     val onSearchButtonClick: () -> Unit = {
-        viewModel.performSearch(textState, "1")
+        viewModelSearch.performSearch(textState, "1")
     }
 
     val onTextFieldValueChange: (String) -> Unit = { newText ->
         // Обнуление searchResults, если новый текст пуст
         if (newText.isEmpty()) {
-            viewModel.clearSearchResults()
+            viewModelSearch.clearSearchResults()
         }
         textState = newText
     }
@@ -86,7 +86,7 @@ fun SearchScreen(navController: NavHostController) {
                 value = textState,
                 onValueChange = onTextFieldValueChange,
                 modifier = Modifier
-                    .padding(top = 20.dp, bottom = 20.dp)
+                    .padding(top = 20.dp, bottom = 5.dp)
                     .fillMaxWidth(),
                 label = {
                     Text(text = stringResource(R.string.search_textfield_label))
@@ -106,6 +106,10 @@ fun SearchScreen(navController: NavHostController) {
                 shape = RoundedCornerShape(20.dp)
             )
 
+            if (isLoading) {
+                CustomLinearProgressBar()
+            }
+
             val firstBoxModifier = if (textState.isEmpty() || searchResults == null) {
                 Modifier.fillMaxWidth().height(0.dp)
             } else {
@@ -124,7 +128,7 @@ fun SearchScreen(navController: NavHostController) {
                 exit = slideOutVertically(targetOffsetY = { -it })
             ) {
                 Box(
-                    modifier = firstBoxModifier,
+                    modifier = firstBoxModifier.padding(top = 10.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     LazyVerticalGrid(
@@ -150,7 +154,7 @@ fun SearchScreen(navController: NavHostController) {
                 exit = slideOutVertically(targetOffsetY = { -it })
             ) {
                 Box(
-                    modifier = secondBoxModifier
+                    modifier = secondBoxModifier.padding(top = 10.dp)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -174,7 +178,10 @@ fun SearchScreen(navController: NavHostController) {
                         )
                         Button(
                             modifier = Modifier.padding(top = 20.dp),
-                            onClick = { navController.navigate(Screens.CreateScreen.screen) }
+                            onClick = {
+                                viewModelSheet.showBottomSheet = true
+                                viewModelSheet.bottomSheetContent = BottomSheetContent.CreateContent
+                            }
                         ) {
                             Text(text = stringResource(R.string.create_movie_button_text))
                         }
@@ -184,5 +191,18 @@ fun SearchScreen(navController: NavHostController) {
 
         }
 
+    }
+}
+
+@Composable
+private fun CustomLinearProgressBar(){
+    Column(modifier = Modifier.fillMaxWidth()) {
+        LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .padding(horizontal = 20.dp)
+                .clip(RoundedCornerShape(4.dp))
+        )
     }
 }
