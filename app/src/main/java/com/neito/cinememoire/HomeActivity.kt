@@ -17,9 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.neito.cinememoire.presentation.appModule
 import com.neito.cinememoire.navigation.Screens
-import com.neito.cinememoire.screens.CreateScreen
 import com.neito.cinememoire.screens.MainScreen
-import com.neito.cinememoire.screens.SettingsScreen
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -40,26 +38,9 @@ class HomeActivity : ComponentActivity() {
         setContent {
             CineMemoireTheme {
                 val navController = rememberNavController()
-                MainNavGraph(navController)
-
-            }
-        }
-    }
-
-    @Composable
-    private fun MainNavGraph(navController: NavHostController) {
-        NavHost(
-            navController = navController,
-            startDestination = Screens.MainScreen.screen,
-        ) {
-            composable(route = Screens.MainScreen.screen) {
+                //MainNavGraph(navController)
                 MainScreen(navController)
-            }
-            composable(route = Screens.SettingsScreen.screen) {
-                SettingsScreen(navController)
-            }
-            composable(route = Screens.CreateScreen.screen) {
-                CreateScreen(navController)
+
             }
         }
     }
