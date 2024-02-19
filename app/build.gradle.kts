@@ -95,6 +95,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.0")
