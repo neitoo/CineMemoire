@@ -25,10 +25,6 @@ import org.koin.core.context.GlobalContext.startKoin
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startKoin {
-            androidContext(this@HomeActivity)
-            modules(appModule)
-        }
 
         installSplashScreen().apply{
             setOnExitAnimationListener{ screen ->
