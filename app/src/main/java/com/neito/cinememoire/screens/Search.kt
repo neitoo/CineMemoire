@@ -1,5 +1,6 @@
 package com.neito.cinememoire.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,19 +26,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -48,33 +54,47 @@ import com.neito.cinememoire.presentation.BottomSheetContent
 import com.neito.cinememoire.presentation.BottomSheetViewModel
 import com.neito.cinememoire.presentation.componentes.MovieItem
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import androidx.compose.runtime.LaunchedEffect as LaunchedEffect
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(navController: NavHostController, viewModelSheet: BottomSheetViewModel) {
-    val viewModelSearch = koinInject<SearchViewModel>()
-
-    var textState by remember {
-        mutableStateOf("")
-    }
+    val viewModelSearch = koinViewModel<SearchViewModel>()
 
     val searchResults by viewModelSearch.searchResults.collectAsState()
     val isLoading by viewModelSearch.isLoading.collectAsState()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val onSearchButtonClick: () -> Unit = {
-        viewModelSearch.performSearch(textState, "1")
+        keyboardController?.hide()
+        val trimmedText = viewModelSearch.textState.trim()
+        if (trimmedText != viewModelSearch.previousSearchText) {
+            viewModelSearch.performSearch(trimmedText, "1")
+            viewModelSearch.previousSearchText = trimmedText
+        }
     }
 
+    var isTextChanged = false
     val onTextFieldValueChange: (String) -> Unit = { newText ->
-        // Обнуление searchResults, если новый текст пуст
-        if (newText.isEmpty()) {
-            viewModelSearch.clearSearchResults()
+        val trimmedText = newText.trimStart()
+
+        if (viewModelSearch.textState != trimmedText) {
+            isTextChanged = true
         }
-        textState = newText
+
+        viewModelSearch.textState = trimmedText
+
+        if (trimmedText.isEmpty() && isTextChanged) {
+            isTextChanged = false
+            viewModelSearch.clearSearchResults()
+            viewModelSearch.previousSearchText = ""
+        }
     }
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,8 +103,16 @@ fun SearchScreen(navController: NavHostController, viewModelSheet: BottomSheetVi
     ){
         Column {
             TextField(
-                value = textState,
+                value = viewModelSearch.textState,
+                maxLines = 1,
                 onValueChange = onTextFieldValueChange,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        keyboardController?.hide()
+                        onSearchButtonClick()
+                    }
+                ),
                 modifier = Modifier
                     .padding(top = 20.dp, bottom = 5.dp)
                     .fillMaxWidth(),
@@ -110,20 +138,24 @@ fun SearchScreen(navController: NavHostController, viewModelSheet: BottomSheetVi
                 CustomLinearProgressBar()
             }
 
-            val firstBoxModifier = if (textState.isEmpty() || searchResults == null) {
-                Modifier.fillMaxWidth().height(0.dp)
+            val firstBoxModifier = if (viewModelSearch.textState.isEmpty() || searchResults == null) {
+                Modifier
+                    .fillMaxWidth()
+                    .height(0.dp)
             } else {
                 Modifier.fillMaxSize()
             }
 
-            val secondBoxModifier = if (textState.isEmpty() || searchResults == null) {
+            val secondBoxModifier = if (viewModelSearch.textState.isEmpty() || searchResults == null) {
                 Modifier.fillMaxSize()
             } else {
-                Modifier.fillMaxWidth().height(0.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .height(0.dp)
             }
 
             AnimatedVisibility(
-                visible = !textState.isEmpty() && searchResults != null,
+                visible = !viewModelSearch.textState.isEmpty() && searchResults != null,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { -it })
             ) {
@@ -149,7 +181,7 @@ fun SearchScreen(navController: NavHostController, viewModelSheet: BottomSheetVi
 
 
             AnimatedVisibility(
-                visible = textState.isEmpty() || searchResults == null,
+                visible = viewModelSearch.textState.isEmpty() || searchResults == null,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { -it })
             ) {
