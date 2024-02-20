@@ -24,7 +24,7 @@ class ApiServiceImpl(
     override suspend fun getSearch(keyword: String, page: String): SearchResponse? {
         val response = client.get(HttpRoutes.GET_SEARCH) {
             headers{
-                append("X-API-KEY", "1b4b7620-8888-4533-8928-3b9c54216f4d")
+                append("X-API-KEY", BuildConfig.API_TMDB)
                 append("Content-Type", "application/json")
             }
             parameter("keyword", keyword)
