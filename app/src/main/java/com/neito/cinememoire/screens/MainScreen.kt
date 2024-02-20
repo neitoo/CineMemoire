@@ -47,6 +47,8 @@ import com.neito.cinememoire.presentation.BottomSheetContent
 import com.neito.cinememoire.presentation.BottomSheetViewModel
 import com.neito.cinememoire.presentation.componentes.CreationContent
 import com.neito.cinememoire.presentation.componentes.SettingsContent
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 
@@ -55,7 +57,7 @@ import org.koin.compose.koinInject
 @Composable
 fun MainScreen(navController: NavHostController){
     val sheetState = rememberModalBottomSheetState()
-    val viewModel = koinInject<BottomSheetViewModel>()
+    val viewModel = koinViewModel<BottomSheetViewModel>()
 
     Scaffold(
         topBar = {
@@ -83,7 +85,9 @@ fun MainScreen(navController: NavHostController){
             sheetState = sheetState
         ) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 5.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp, vertical = 5.dp),
                 contentAlignment = Alignment.Center
             ){
                 viewModel.bottomSheetContent?.let { content ->
