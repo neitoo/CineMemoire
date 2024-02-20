@@ -1,6 +1,9 @@
 package com.neito.cinememoire.presentation.componentes
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.MarqueeAnimationMode
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +33,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.neito.cinememoire.data.remote.dto.Film
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieItem(movie: Film){
     val imageState = rememberAsyncImagePainter(
@@ -96,25 +100,13 @@ fun MovieItem(movie: Film){
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .alpha(0.7f)
-                    .horizontalScroll(scrollGenres)
+                    .basicMarquee(
+                        iterations = Int.MAX_VALUE,
+                        delayMillis = 0,
+                        initialDelayMillis = 0,
+                        velocity = 40.dp
+                    )
             )
-            /*LazyHorizontalGrid(
-                rows = GridCells.Fixed(1),
-                modifier = Modifier.fillMaxSize()
-            ){
-                movie.genres.forEach { gen ->
-                    item {
-                        Text(
-                            text = gen.genre,
-                            style = TextStyle(fontSize = 16.sp),
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .alpha(0.7f)
-                        )
-                    }
-                }
-            }*/
-
         }
     }
 }
